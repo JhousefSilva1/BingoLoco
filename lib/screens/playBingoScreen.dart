@@ -31,7 +31,7 @@ class PlayBingoAppScreen extends StatefulWidget {
 }
 
 class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
-   int numeroAleatorio=0;
+  int numeroAleatorio = 0;
   List<int> numerosGenerados = [];
 
   void generarNumerosAleatorios() {
@@ -54,7 +54,7 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
       appBar: AppBar(
         title: const Text('Bingo'),
       ),
-      body:  Center(
+      body: Center(
         child: Column(
           children: <Widget>[
             const Icon(
@@ -80,17 +80,31 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Text(
-                numeroAleatorio != null ? numeroAleatorio.toString() : 'Presiona el botón',
+                numeroAleatorio != null
+                    ? numeroAleatorio.toString()
+                    : 'Presiona el botón',
+                style: TextStyle(fontSize: 24.0),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.blue,
+                  width: 2.0,
+                ),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                numerosGenerados != null
+                    ? numerosGenerados.toList().toString()
+                    : '[]',
                 style: TextStyle(fontSize: 24.0),
               ),
             ),
           ],
-          
-          
         ),
-        
       ),
-      
     );
   }
 }
