@@ -1,10 +1,5 @@
-import 'package:bingo/main.dart';
 import 'package:bingo/screens/playBingoScreen.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MenuApp());
-}
 
 class MenuApp extends StatelessWidget {
   @override
