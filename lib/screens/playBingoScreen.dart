@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:math';
 import 'package:flutter/material.dart';
 
@@ -148,7 +150,12 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
   }
 
   search(int index) {
-    // Implementa la lógica para buscar en tempDataProvider
+    if (tempDataProvider.uniquelist.length > 0) {
+      setState(() {
+        tempDataProvider.numeroAleatorio = tempDataProvider.uniquelist[index];
+      });
+    }
+
   }
 }
 

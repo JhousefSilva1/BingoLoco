@@ -1,5 +1,5 @@
 import 'package:bingo/screens/playBingoScreen.dart';
-import 'package:bingo/screens/settingsBingo.dart';
+import 'package:bingo/screens/orderBingo.dart';
 import 'package:flutter/material.dart';
 
 class MenuApp extends StatelessWidget {
