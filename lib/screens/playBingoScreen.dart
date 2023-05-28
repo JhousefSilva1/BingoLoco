@@ -1,9 +1,20 @@
-// ignore_for_file: unnecessary_const, prefer_const_constructors, sort_child_properties_last, unnecessary_null_comparison
-
 import 'dart:math';
-
-import 'package:bingo/main.dart';
 import 'package:flutter/material.dart';
+
+class TempDataProvider {
+  static final TempDataProvider _instance = TempDataProvider._internal();
+
+  factory TempDataProvider() {
+    return _instance;
+  }
+
+  TempDataProvider._internal();
+
+  int numeroAleatorio = 0;
+  Set<int> numerosGenerados = <int>{};
+  Set<int> numerosGeneradosUnique = <int>{};
+  List uniquelist = [];
+}
 
 void main() {
   runApp(PlayBingoApp());
@@ -31,10 +42,7 @@ class PlayBingoAppScreen extends StatefulWidget {
 }
 
 class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
-  int numeroAleatorio = 0;
-  Set<int> numerosGenerados = <int>{};
-  Set<int> numerosGeneradosUnique = <int>{};
-  List uniquelist = [];
+  TempDataProvider tempDataProvider = TempDataProvider();
 
   void generarNumerosAleatorios() {
     Random random = Random();
@@ -42,16 +50,16 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
 
     do {
       nuevoNumero = random.nextInt(99) + 1;
-    } while (numerosGenerados.contains(nuevoNumero));
+    } while (tempDataProvider.numerosGenerados.contains(nuevoNumero));
 
     setState(() {
-      numeroAleatorio = nuevoNumero;
-      numerosGenerados.add(nuevoNumero);
-      numerosGenerados.add(nuevoNumero);
+      tempDataProvider.numeroAleatorio = nuevoNumero;
+      tempDataProvider.numerosGenerados.add(nuevoNumero);
+      tempDataProvider.numerosGenerados.add(nuevoNumero);
       var seen = Set();
-      uniquelist =
-          numerosGenerados.where((country) => seen.add(country)).toList();
-      print(uniquelist);
+      tempDataProvider.uniquelist =
+          tempDataProvider.numerosGenerados.where((country) => seen.add(country)).toList();
+      print(tempDataProvider.uniquelist);
     });
   }
 
@@ -98,29 +106,40 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Text(
-                  numeroAleatorio != null
-                      ? numeroAleatorio.toString()
+                  tempDataProvider.numeroAleatorio != null
+                      ? tempDataProvider.numeroAleatorio.toString()
                       : 'Presiona el botón',
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: uniquelist.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Color.fromRGBO(Random().nextInt(255),
-                              Random().nextInt(255), Random().nextInt(255), 1),
-                          child: Text(uniquelist[index].toString(),
-                              style:
-                                  TextStyle(fontSize: 22, color: Colors.white)),
-                        ),
-                      ],
-                    );
-                  }),
-              ElevatedButton(onPressed: search(5), child: Text('buscar'))
+              GridView.builder(
+                padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                shrinkWrap: true,
+                itemCount: tempDataProvider.uniquelist.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 10,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Color.fromRGBO(
+                        Random().nextInt(255),
+                        Random().nextInt(255),
+                        Random().nextInt(255),
+                        1,
+                      ),
+                      child: Text(
+                        tempDataProvider.uniquelist[index].toString(),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              ElevatedButton(onPressed: () => search(5), child: Text('buscar')),
             ],
           ),
         ),
@@ -128,7 +147,9 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
     );
   }
 
-  search(int index) {}
+  search(int index) {
+    // Implementa la lógica para buscar en tempDataProvider
+  }
 }
 
 class TreeNode {

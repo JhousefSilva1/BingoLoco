@@ -1,4 +1,5 @@
 import 'package:bingo/screens/playBingoScreen.dart';
+import 'package:bingo/screens/settingsBingo.dart';
 import 'package:flutter/material.dart';
 
 class MenuApp extends StatelessWidget {
@@ -39,6 +40,8 @@ class MenuScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+
+            //button to pllay Quieres Jugar
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -54,12 +57,15 @@ class MenuScreen extends StatelessWidget {
                 ),
               ),
             ),
+
             const SizedBox(height: 24),
+
+            //buttom to show Settings screm
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MenuApp()),
+                  MaterialPageRoute(builder: (context) => SettingsBingoApp()),
                 );
               },
               child: const Text('Settings'),

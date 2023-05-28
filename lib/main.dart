@@ -1,5 +1,6 @@
 import 'package:bingo/screens/menuScreen.dart';
 import 'package:bingo/screens/playBingoScreen.dart';
+import 'package:bingo/screens/settingsBingo.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -20,6 +21,7 @@ class MenuApp extends StatelessWidget {
       routes: {
         '/': (context) => MenuScreen(),
         'play': (context) => PlayBingoApp(),
+        'settings': (context) => SettingsBingoApp(),
       },
     );
   }
