@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:collection';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,8 @@ class TempDataProvider {
   List<List<int?>> bingoCard = [];
   List uniquelist = [];
   ListaEnlazada lista = ListaEnlazada();
+  GraphNode? node;
+  List<GridItem> items = [];
 }
 
 class PlayBingoAppScreen extends StatefulWidget {
@@ -77,6 +80,9 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
           number = null;
         }
         row.add(number);
+        if(number != null){
+          tempDataProvider.items.add(GridItem(value: number));
+        }
       }
       tempDataProvider.bingoCard.add(row);
     }
@@ -103,6 +109,11 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
           .toList();
       print(tempDataProvider.uniquelist);
       tempDataProvider.lista.insertar(nuevoNumero);
+      if(tempDataProvider.node == null){
+        if(nuevoNumero != null) tempDataProvider.node = GraphNode(nuevoNumero);
+      }else{
+        if(nuevoNumero != null) tempDataProvider.node!.neighbors.add(GraphNode(nuevoNumero));
+      }
     });
   }
 
@@ -152,6 +163,16 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
                           int rowIndex = index ~/ 10;
                           int columnIndex = index % 10;
                           int? number = tempDataProvider.bingoCard[rowIndex][columnIndex];
+                          GridItem? foundItem;
+                          bool isSelected = false;
+                          if(number != null){
+                            foundItem = tempDataProvider.items.firstWhere(
+                              (item) => item.value == number,
+                            );
+
+                            print(foundItem.selected);
+                            isSelected = foundItem.selected;
+                          }
                           
       
                           return Container(
@@ -159,18 +180,35 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
                               border: Border.all(
                                 color: Colors.black,
                               ),
+                              color: isSelected? Colors.green: Colors.white
                             ),
                             child: Center(
                               child: number != null
                                   ? GestureDetector(
                                     onTap: () {
-                                      print(number);
+                                      if(tempDataProvider.node != null){
+                                        final bool found = bfs(tempDataProvider.node!, number);
+                                        print(found ? 'Elemento encontrado' : 'Elemento no encontrado');
+                                        print(number);
+                                        if(found){
+                                          foundItem = tempDataProvider.items.firstWhere(
+                                            (item) => item.value == number,
+                                          );
+                                          if(foundItem != null){
+                                            tempDataProvider.items.removeWhere((item) => item.value == number);
+                                            tempDataProvider.items.add(GridItem(value: foundItem!.value, selected: true));
+                                          }
+                                          setState(() {
+                                          });
+                                        }
+                                      }
                                     },
                                     child: Text(
                                         number.toString(),
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
+                                          // color: isSelected? Colors.green: Colors.black
                                         ),
                                       ),
                                   )
@@ -359,4 +397,46 @@ class ListaEnlazada {
 
     return false; // El valor no se encontró en la lista enlazada
   }
+}
+
+
+class GraphNode {
+  final int id;
+  final List<GraphNode> neighbors;
+  bool state;
+
+  GraphNode(this.id, {List<GraphNode>? neighbors, this.state = false})
+      : neighbors = neighbors ?? [];
+}
+
+bool bfs(GraphNode start, int target) {
+  final Queue<GraphNode> queue = Queue();
+  final Set<GraphNode> visited = Set();
+
+  queue.add(start);
+
+  while (queue.isNotEmpty) {
+    final current = queue.removeFirst();
+
+    if (current.id == target) {
+      return true;
+    }
+
+    visited.add(current);
+
+    for (final neighbor in current.neighbors) {
+      if (!visited.contains(neighbor)) {
+        queue.add(neighbor);
+      }
+    }
+  }
+
+  return false;
+}
+
+class GridItem {
+  int value;
+  bool selected;
+  
+  GridItem({required this.value, this.selected = false});
 }
