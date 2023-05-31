@@ -1,3 +1,4 @@
+import 'package:bingo/screens/cardBingo.dart';
 import 'package:bingo/screens/menuScreen.dart';
 import 'package:bingo/screens/playBingoScreen.dart';
 import 'package:bingo/screens/orderBingo.dart';
@@ -22,6 +23,7 @@ class MenuApp extends StatelessWidget {
         '/': (context) => MenuScreen(),
         'play': (context) => PlayBingoApp(),
         'settings': (context) => SettingsBingoApp(),
+        'cardBingo': (context) => CardBingoAppScreen(),
       },
     );
   }
