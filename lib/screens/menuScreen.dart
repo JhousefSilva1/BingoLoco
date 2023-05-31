@@ -1,3 +1,4 @@
+import 'package:bingo/screens/cardBingo.dart';
 import 'package:bingo/screens/playBingoScreen.dart';
 import 'package:bingo/screens/orderBingo.dart';
 import 'package:flutter/material.dart';
@@ -75,10 +76,10 @@ class MenuScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MenuApp()),
+                  MaterialPageRoute(builder: (context) => CardBingoAppScreen()),
                 );
               },
-              child: const Text('About'),
+              child: const Text('Pide tu carton BingoLoco'),
             ),
           ],
         ),

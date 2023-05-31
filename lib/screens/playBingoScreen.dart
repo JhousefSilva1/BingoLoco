@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:math';
+import 'package:bingo/screens/cardBingo.dart';
 import 'package:flutter/material.dart';
 
 class TempDataProvider {
@@ -59,8 +60,9 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
       tempDataProvider.numerosGenerados.add(nuevoNumero);
       tempDataProvider.numerosGenerados.add(nuevoNumero);
       var seen = Set();
-      tempDataProvider.uniquelist =
-          tempDataProvider.numerosGenerados.where((country) => seen.add(country)).toList();
+      tempDataProvider.uniquelist = tempDataProvider.numerosGenerados
+          .where((country) => seen.add(country))
+          .toList();
       print(tempDataProvider.uniquelist);
     });
   }
@@ -115,7 +117,8 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
                 ),
               ),
               GridView.builder(
-                padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
                 shrinkWrap: true,
                 itemCount: tempDataProvider.uniquelist.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -141,7 +144,17 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
                   );
                 },
               ),
-              ElevatedButton(onPressed: () => search(5), child: Text('buscar')),
+              ElevatedButton(onPressed: () => search, child: Text('buscar')),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CardBingoAppScreen()),
+                  );
+                },
+                child: Text('Ver Carton'),
+              ),
             ],
           ),
         ),
@@ -155,7 +168,6 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
         tempDataProvider.numeroAleatorio = tempDataProvider.uniquelist[index];
       });
     }
-
   }
 }
 

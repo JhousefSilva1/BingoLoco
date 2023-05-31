@@ -8,7 +8,6 @@ void main() {
 }
 
 class SettingsBingoApp extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,8 +31,6 @@ class SettingsBingoAppScreen extends StatefulWidget {
 class _SettingsBingoAppScreenState extends State<SettingsBingoAppScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-    );
+    return Scaffold();
   }
 }
