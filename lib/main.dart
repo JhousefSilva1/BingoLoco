@@ -21,9 +21,9 @@ class MenuApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => MenuScreen(),
-        'play': (context) => PlayBingoApp(),
+        'play': (context) => const PlayBingoAppScreen(),
         'settings': (context) => SettingsBingoApp(),
-        'cardBingo': (context) => CardBingoAppScreen(),
+        'cardBingo': (context) => const CardBingoAppScreen(),
       },
     );
   }

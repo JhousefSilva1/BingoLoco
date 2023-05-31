@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:math';
-import 'package:bingo/screens/cardBingo.dart';
 import 'package:flutter/material.dart';
 
 class TempDataProvider {
@@ -16,25 +15,9 @@ class TempDataProvider {
   int numeroAleatorio = 0;
   Set<int> numerosGenerados = <int>{};
   Set<int> numerosGeneradosUnique = <int>{};
+  List<List<int?>> bingoCard = [];
   List uniquelist = [];
-}
-
-void main() {
-  runApp(PlayBingoApp());
-}
-
-class PlayBingoApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Bingo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const PlayBingoAppScreen(),
-    );
-  }
+  ListaEnlazada lista = ListaEnlazada();
 }
 
 class PlayBingoAppScreen extends StatefulWidget {
@@ -45,6 +28,61 @@ class PlayBingoAppScreen extends StatefulWidget {
 }
 
 class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  // ListaEnlazada lista = ListaEnlazada();
+  bool? isSearch;
+
+  @override
+  void initState() {
+    generateBingoCard();
+    super.initState();
+  }
+
+  void _search() {
+    String searchText = _searchController.text;
+    setState(() {
+      isSearch = tempDataProvider.lista.buscar(int.parse(searchText));      
+    });
+  }
+
+  void generateBingoCard({bool isNew = false}) {
+    if(isNew) tempDataProvider.bingoCard = [];
+    Random random = Random();
+    List<int> selectedNumbers = [];
+    int blankSpacesCount = 0;
+
+    for (int i = 0; i < 3; i++) {
+      List<int?> row = [];
+      for (int j = 0; j < 10; j++) {
+        int start = j * 10 + 1;
+        int end = (j + 1) * 10;
+
+        int? number;
+        if (selectedNumbers.length < 90 && blankSpacesCount < 12) {
+          if (random.nextDouble() < 0.5) {
+            do {
+              number = random.nextInt(end - start + 1) + start;
+            } while (selectedNumbers.contains(number));
+            selectedNumbers.add(number);
+          } else {
+            number = null;
+            blankSpacesCount++;
+          }
+        } else if (selectedNumbers.length < 90) {
+          do {
+            number = random.nextInt(end - start + 1) + start;
+          } while (selectedNumbers.contains(number));
+          selectedNumbers.add(number);
+        } else {
+          number = null;
+        }
+        row.add(number);
+      }
+      tempDataProvider.bingoCard.add(row);
+    }
+    setState(() {});
+  }
+
   TempDataProvider tempDataProvider = TempDataProvider();
 
   void generarNumerosAleatorios() {
@@ -64,98 +102,178 @@ class _PlayBingoAppScreenState extends State<PlayBingoAppScreen> {
           .where((country) => seen.add(country))
           .toList();
       print(tempDataProvider.uniquelist);
+      tempDataProvider.lista.insertar(nuevoNumero);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var tree = TreeNode(
-      'Root',
-      [
-        TreeNode('Child 1', [
-          TreeNode('Grandchild 1'),
-          TreeNode('Grandchild 2'),
-        ]),
-        TreeNode('Child 2'),
-      ],
-    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bingo'),
       ),
-      body: SizedBox(
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              const Icon(
-                Icons.casino_outlined,
-                size: 200,
-              ),
-              ElevatedButton(
-                onPressed: generarNumerosAleatorios,
-                child: Icon(Icons.refresh),
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(16.0),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Container(
-                padding: EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.blue,
-                    width: 2.0,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  tempDataProvider.numeroAleatorio != null
-                      ? tempDataProvider.numeroAleatorio.toString()
-                      : 'Presiona el botón',
-                  style: TextStyle(fontSize: 24.0),
-                ),
-              ),
-              GridView.builder(
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
-                shrinkWrap: true,
-                itemCount: tempDataProvider.uniquelist.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 10,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 10.0,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    child: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Color.fromRGBO(
-                        Random().nextInt(255),
-                        Random().nextInt(255),
-                        Random().nextInt(255),
-                        1,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SizedBox(
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: const Text(
+                                'Mi Carton Bingo',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  color: Color(0xFF004070),
+                                ),
+                              ),
+                            ), 
+                          ),
+                          ElevatedButton(
+                            onPressed: () => generateBingoCard(isNew: true),
+                            child: const Text('Nuevo cartón'),
+                          ),
+                        ],
                       ),
-                      child: Text(
-                        tempDataProvider.uniquelist[index].toString(),
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      const SizedBox(height: 20),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: 30,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 10,
+                        ),
+                        itemBuilder: (context, index) {
+                          int rowIndex = index ~/ 10;
+                          int columnIndex = index % 10;
+                          int? number = tempDataProvider.bingoCard[rowIndex][columnIndex];
+                          
+      
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
+                              ),
+                            ),
+                            child: Center(
+                              child: number != null
+                                  ? GestureDetector(
+                                    onTap: () {
+                                      print(number);
+                                    },
+                                    child: Text(
+                                        number.toString(),
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                  )
+                                  : const Icon(Icons.sentiment_satisfied_alt),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      // ElevatedButton(
+                      //   onPressed: generateBingoCard,
+                      //   child: const Text('Generar cartón de bingo'),
+                      // ),
+                    ],
+                  ),
+                ),
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    labelText: 'Buscar',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: _search,
+                    ),
+                    border: OutlineInputBorder()
+                  ),
+                ),
+                SizedBox(height: 10),
+                if(isSearch != null)Text(isSearch == true? 'Salio el numero: ${_searchController.text}': 'No salio el numero: ${_searchController.text}'),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: generarNumerosAleatorios,
+                      child: Icon(Icons.generating_tokens),
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(16.0),
                       ),
                     ),
-                  );
-                },
-              ),
-              ElevatedButton(onPressed: () => search, child: Text('buscar')),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CardBingoAppScreen()),
-                  );
-                },
-                child: Text('Ver Carton'),
-              ),
-            ],
+                    SizedBox(height: 16.0),
+                    Container(
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.blue,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
+                      child: Text(
+                        tempDataProvider.numeroAleatorio != null
+                            ? tempDataProvider.numeroAleatorio.toString()
+                            : 'Presiona el botón',
+                        style: TextStyle(fontSize: 24.0),
+                      ),
+                    ),
+                    
+                  ],
+                ),
+                
+                GridView.builder(
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+                  shrinkWrap: true,
+                  itemCount: tempDataProvider.uniquelist.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 10,
+                    crossAxisSpacing: 10.0,
+                    mainAxisSpacing: 10.0,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Color.fromRGBO(
+                          Random().nextInt(255),
+                          Random().nextInt(255),
+                          Random().nextInt(255),
+                          1,
+                        ),
+                        child: Text(
+                          tempDataProvider.uniquelist[index].toString(),
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                // ElevatedButton(onPressed: () => search, child: Text('buscar')),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => CardBingoAppScreen()),
+                //     );
+                //   },
+                //   child: Text('Ver Carton'),
+                // ),
+              ],
+            ),
           ),
         ),
       ),
@@ -207,5 +325,38 @@ class TreeWidget extends StatelessWidget {
     return ListView(
       children: [_buildTree(rootNode)],
     );
+  }
+}
+
+class Nodo {
+  dynamic valor;
+  Nodo? siguiente;
+
+  Nodo(this.valor, {this.siguiente});
+}
+
+class ListaEnlazada {
+  Nodo? cabeza;
+
+  void insertar(dynamic valor) {
+    if (cabeza == null) {
+      cabeza = Nodo(valor);
+    } else {
+      Nodo nuevoNodo = Nodo(valor, siguiente: cabeza);
+      cabeza = nuevoNodo;
+    }
+  }
+
+  bool buscar(dynamic valor) {
+    Nodo? actual = cabeza;
+
+    while (actual != null) {
+      if (actual.valor == valor) {
+        return true; // El valor se encontró en la lista enlazada
+      }
+      actual = actual.siguiente;
+    }
+
+    return false; // El valor no se encontró en la lista enlazada
   }
 }

@@ -1,24 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-void main() {
-  runApp(CardBingoApp());
-}
-
-class CardBingoApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Bingo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const CardBingoAppScreen(),
-    );
-  }
-}
-
 class CardBingoAppScreen extends StatefulWidget {
   const CardBingoAppScreen({Key? key}) : super(key: key);
 
@@ -28,6 +10,12 @@ class CardBingoAppScreen extends StatefulWidget {
 
 class _CardBingoAppScreenState extends State<CardBingoAppScreen> {
   List<List<int?>> bingoCard = [];
+
+  @override
+  void initState() {
+    generateBingoCard();
+    super.initState();
+  }
 
   void generateBingoCard() {
     bingoCard = [];

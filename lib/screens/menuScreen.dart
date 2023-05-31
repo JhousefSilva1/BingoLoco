@@ -23,6 +23,7 @@ class MenuScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bingo'),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
@@ -47,7 +48,7 @@ class MenuScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PlayBingoApp()),
+                  MaterialPageRoute(builder: (context) => PlayBingoAppScreen()),
                 );
               },
               child: const Text(
